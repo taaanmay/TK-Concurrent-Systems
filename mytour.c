@@ -147,7 +147,7 @@ void vectorised_find_tour(const point cities[], int tour[], int ncities)
 
 void my_tour(const point cities[], int tour[], int ncities)
 {
-  if (ncities < 20000) {
+  if (ncities < 1000) {
     sequential_find_tour(cities, tour, ncities);
   }else{
     vectorised_find_tour(cities, tour, ncities);
