@@ -8,18 +8,7 @@
 #include <alloca.h>
 #include <omp.h>
 
-/* Changes Made :
-Added SIMD instructions and used OpenMP.
-1) Firstly, Parallelised the for loop which initialises the visited array using Parallel For loop. 
-2) Then, calculated the modified length called `modified_len` to accomodate the cases where ncities is not exactly divisibe by 4.
-3) Created 2 arrays called city_X and city_Y which stores the x and y coordinates of every city. Used another parallel for loop for this loop. 
-4) Created __m128 variables to calculate the cost and distance. Using Parallel For Loop and SIMD variables, code was parallelised and the distance was found much quicker.
-   Stored the cost in an array called `cost_array` which is used later in the code in comparing the costs.
-Remarks:
-1) Major difference is seen when there a large number of cities as parallelisation for a small dataset incorporates larger computational cost. 
-2) Answers found through the sequential and parallel way are exactly same and accuracy is maintained.
-3) Further improvement can be done by using Dynamic Approach to find the tour instead of brute-force.
-*/
+
 
 float my_tour_sqr(float x)
 {
@@ -34,13 +23,26 @@ float my_tour_dist(const point cities[], int i, int j) {
 void sequential_find_tour(const point cities[], int tour[], int ncities)
 {
   int i,j;
-  char *visited = alloca(ncities);
+  //char *visited = alloca(ncities);
   int ThisPt, ClosePt=0;
   float CloseDist;
   int endtour=0;
   
+  /*
   for (i=0; i<ncities; i++)
     visited[i]=0;
+  */
+
+  //Intialising visited array  
+  int no_visited = sizeof(float)*ncities + sizeof(float)*(ncities % 4);
+  float visited[no_visited];
+
+  __m128 zero_4 =_mm_set1_ps(0);
+  #pragma omp parallel for 
+  for (i=0; i<no_visited; i+=4){
+    _mm_store_ps(&visited[i],zero_4);
+  }  
+  
   ThisPt = ncities-1;
   visited[ncities-1] = 1;
   tour[endtour++] = ncities-1;
@@ -64,59 +66,90 @@ void sequential_find_tour(const point cities[], int tour[], int ncities)
 
 void vectorised_find_tour(const point cities[], int tour[], int ncities)
 {
-  int i,j;
-  char *visited = alloca(ncities);
+  int i,j, index;
   int ThisPt, ClosePt=0;
   float CloseDist;
   int endtour=0;
 
-  //Intialising visited array
-  #pragma omp for 
-  for (i=0; i<ncities; i++){
-    visited[i]=0;
+
+  //Intialising visited array  
+  int no_visited = sizeof(float)*ncities + sizeof(float)*(ncities % 4);
+  float visited[no_visited];
+
+  __m128 zero_4 =_mm_set1_ps(0);
+  #pragma omp parallel for 
+  for (i=0; i<no_visited; i+=4){
+    _mm_store_ps(&visited[i],zero_4);
   }
-    
+
+  // Change length for the cases where length is not exactly divisible by 4
+  int modified_len = ncities + (4 - (ncities % 4));
+
+  // Extract the x and y values for each city
+  float *city_X = malloc(sizeof(float) * modified_len);
+  float *city_Y = malloc(sizeof(float) * modified_len);
+  #pragma omp parallel for
+  for (i = 0; i < ncities; i++) {
+      city_X[i] = cities[i].x;
+      city_Y[i] = cities[i].y;
+   }
+
   ThisPt = ncities-1;           // Start from the last city
   visited[ncities-1] = 1;       // Marks that the last city has been visited
-  tour[endtour++] = ncities-1;  // ?? tour[0] = last city  
+  tour[endtour++] = ncities-1;  // ?? tour[0] = last city   
+
+  __m128 thisPointX;
+  __m128 thisPointY;
+  __m128 difference_X;
+  __m128 difference_Y;
+  __m128 current_X;
+  __m128 current_Y;
+  __m128 diff_square_X;
+  __m128 diff_square_Y;
+  __m128 distance;
+  
   
   for (i=1; i<ncities; i++) {
-    CloseDist = DBL_MAX;        // Close Distance initialised to maximum floating number
-
+    
   // Calculate Cost for neighbors for this array
-  int index;  
-  int thisPointX = cities[ThisPt].x;
-  int thisPointY = cities[ThisPt].y;
-  float *costArray = malloc(sizeof(float) * ncities);
- 
-  int difference_X;
-  int difference_Y;
-  #pragma omp for private(difference_X, difference_Y)
-  for (index = 0; index < ncities; index++){
-    difference_X = thisPointX - cities[index].x;
-    difference_Y = thisPointY - cities[index].y;  
-    costArray[index] = sqrt(sqr(difference_X) + sqr(difference_Y)); 
+  float *costArray = malloc(sizeof(float) * modified_len);  
+
+  #pragma omp parallel for private(index, thisPointX, thisPointY, difference_X, difference_Y, current_X, current_Y, diff_square_X, diff_square_Y, distance)
+  for (index = 0; index < modified_len; index += 4){
+    thisPointX = _mm_set1_ps(city_X[ThisPt]);
+    current_X  = _mm_load_ps(&city_Y[index]);
+    
+    thisPointY = _mm_set1_ps(city_X[ThisPt]);
+    current_Y  = _mm_load_ps(&city_Y[index]);
+
+    difference_X = _mm_sub_ps(thisPointX, current_X);
+    difference_Y = _mm_sub_ps(thisPointY, current_Y);  
+    
+    diff_square_X = _mm_mul_ps(difference_X, difference_X);
+    diff_square_Y = _mm_mul_ps(difference_Y, difference_Y);
+
+    distance = _mm_sqrt_ps(_mm_add_ps(diff_square_X,diff_square_Y));
+    _mm_store_ps(&costArray[index],distance);
   }
 
-  for (j=0; j<ncities-1; j++) {
-      if (!visited[j]) {
-	      float checkShortDist = costArray[j];
-        if (checkShortDist < CloseDist) {
-	        CloseDist = checkShortDist;
-	        ClosePt = j;
-	      }
-      }
+    CloseDist = DBL_MAX;        // Close Distance initialised to maximum floating number
+    for (j=0; j<ncities-1; j++) {
+      if (!visited[j] && costArray[j] < CloseDist) {
+	      CloseDist = costArray[j];
+	      ClosePt = j;
+	    }
     }
     tour[endtour++] = ClosePt;
     visited[ClosePt] = 1;
     ThisPt = ClosePt;
+    free(costArray);
   }
 }
 
 
 void my_tour(const point cities[], int tour[], int ncities)
 {
-  if (ncities < 1000) {
+  if (ncities < 20000) {
     sequential_find_tour(cities, tour, ncities);
   }else{
     vectorised_find_tour(cities, tour, ncities);
