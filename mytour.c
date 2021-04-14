@@ -77,12 +77,12 @@ void find_tour(const point cities[], int tour[], int ncities)
     //CloseDist = DBL_MAX;
 
 
-     // Local variables for parallel
+     		  
+ #pragma omp parallel
+ {
+      // Local variables for parallel
      float tempCloseDist = DBL_MAX;
-     int tempClosePt;		  
-    #pragma omp parallel private(tempCloseDist, tempClosePt)
-    {
-      
+     int tempClosePt;
       // Parallelise if ncities > 1000
      #pragma omp for
       for (j=0; j<ncities-1; j++) {
@@ -94,12 +94,17 @@ void find_tour(const point cities[], int tour[], int ncities)
           }
         }
       }
+   
+   #pragma omp critical
+   {
       CloseDist = tempCloseDist;
       ClosePt = tempClosePt;
-    }
-    tour[endtour++] = ClosePt;
-    visited[ClosePt] = 1;
-    ThisPt = ClosePt;
+      tour[endtour++] = ClosePt;
+      visited[ClosePt] = 1;
+      ThisPt = ClosePt;	
+    }	    
+}
+   
     
   }
 }
