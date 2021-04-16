@@ -9,136 +9,55 @@
 #include <omp.h>
 
 
-float my_tour_sqr(float x)
+float local_sqr(float x)
 {
   return x*x;
 }
 
-float my_tour_dist(const point cities[], int i, int j) {
-  return sqrt(my_tour_sqr(cities[i].x-cities[j].x) + my_tour_sqr(cities[i].y-cities[j].y));
+float local_dist(const point cities[], int i, int j) {
+  return sqrt(local_sqr(cities[i].x-cities[j].x) + local_sqr(cities[i].y-cities[j].y));
 }
-
-void seq_find_tour(const point cities[], int tour[], int ncities)
-{
-  int i,j;
-  char *visited = alloca(ncities);
-  int ThisPt, ClosePt=0;
-  float CloseDist;
-  int endtour=0;
-  
-  for (i=0; i<ncities; i++){
-    visited[i]=0;
-  }
-    
-  ThisPt = ncities-1;
-  visited[ncities-1] = 1;
-  tour[endtour++] = ncities-1;
-  
-  for (i=1; i<ncities; i++) {
-    CloseDist = DBL_MAX;
-    for (j=0; j<ncities-1; j++) {
-      if (!visited[j]) {
-	      if (my_tour_dist(cities, ThisPt, j) < CloseDist) {
-	         CloseDist = my_tour_dist(cities, ThisPt, j);
-	          ClosePt = j;
-	      }
-      }
-    }
-    tour[endtour++] = ClosePt;
-    visited[ClosePt] = 1;
-    ThisPt = ClosePt;
-  }
-}
-
-
-
-void parallel_find_tour(const point cities[], int tour[], int ncities)
-{
-  int i,j;
-  char *visited = alloca(ncities);
-  int ThisPt, ClosePt=0;
-  float CloseDist;
-  int endtour=0;
-  
-  #pragma omp parallel for
-  for (i=0; i<ncities; i++){
-    visited[i]=0;
-  }
-    
-  
-  ThisPt = ncities-1;
-  visited[ncities-1] = 1;
-  tour[endtour++] = ncities-1;
-  
-  for (i=1; i<ncities; i++) {
-    CloseDist = DBL_MAX;
-    for (j=0; j<ncities-1; j++) {
-      if (!visited[j]) {
-	      if (my_tour_dist(cities, ThisPt, j) < CloseDist) {
-	         CloseDist = my_tour_dist(cities, ThisPt, j);
-	          ClosePt = j;
-	      }
-      }
-    }
-    tour[endtour++] = ClosePt;
-    visited[ClosePt] = 1;
-    ThisPt = ClosePt;
-  }
-} 
-
-
 
 void find_tour(const point cities[], int tour[], int ncities)
 {
-  int i,j;
-  char *visited = alloca(ncities);
-  int ThisPt, ClosePt=0;
-  float CloseDist;
-  int endtour=0;
   
-  // Parallelise if ncities > 1000
-  #pragma omp parallel for if(ncities > 1000)
-  for (i=0; i<ncities; i++){
-    visited[i]=0;
-  }
-    
-  ThisPt = ncities-1;
-  visited[ncities-1] = 1;
-  tour[endtour++] = ncities-1;
+	
+	  int j;
+	  char *visited = alloca(ncities);
+	  int ThisPt, ClosePt=0;
+	  float CloseDist;
+	  int endtour=0;
   
-  for (i=1; i<ncities; i++) {
-    //CloseDist = DBL_MAX;
+  	  int i;
+	  #pragma omp parallel for 
+	  for (i=0; i<ncities; i++)
+	  {
+	  	visited[i]=0;
+	  }
+	    
+	  
 
-    //#pragma omp parallel
-    {
-      // Local variables for parallel
-      float tempCloseDist = DBL_MAX;
-      int tempClosePt;
-      
-      // Parallelise if ncities > 1000
-   #pragma omp parallel for private(tempCloseDist, tempClosePt)
-   {	    
-      for (j=0; j<ncities-1; j++) {
-        if (!visited[j]) {
-          float temp = my_tour_dist(cities, ThisPt, j);
-          if ( temp < tempCloseDist) {
-              tempCloseDist = temp;
-              tempClosePt = j;
-          }
-        }
-      }
-       
-   }
-    CloseDist = tempCloseDist;
-    ClosePt = tempClosePt;
-    tour[endtour++] = ClosePt;
-    visited[ClosePt] = 1;
-    ThisPt = ClosePt;
-    
-  }
+	  ThisPt = ncities-1;
+	  visited[ncities-1] = 1;
+	  tour[endtour++] = ncities-1;
+	  
+	  for (i=1; i<ncities; i++) {
+	    CloseDist = DBL_MAX;
+	    for (j=0; j<ncities-1; j++) {
+	      if (!visited[j]) {
+		if (local_dist(cities, ThisPt, j) < CloseDist) {
+		  CloseDist = local_dist(cities, ThisPt, j);
+		  ClosePt = j;
+		}
+	      }
+	    }
+	    tour[endtour++] = ClosePt;
+	    visited[ClosePt] = 1;
+	    ThisPt = ClosePt;
+	  }
+	
+  
 }
-
-
 
 void my_tour(const point cities[], int tour[], int ncities)
 {
