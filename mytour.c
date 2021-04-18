@@ -11,6 +11,24 @@
 #include <xmmintrin.h>
 
 
+/*
+/* Changes Made :
+Added SIMD instructions and used OpenMP.
+1) Firstly, Parallelised the for loop which initialises the visited array using Parallel For loop. 
+2) Then, calculated the modified length called `modified_len` to accomodate the cases where ncities is not exactly divisibe by 4.
+3) Created 2 arrays called city_X and city_Y which stores the x and y coordinates of every city. Used another parallel for loop for this loop. 
+4) Created __m128 variables to calculate the cost and distance. Using Parallel For Loop and SIMD variables, code was parallelised and the distance was found much quicker.
+   Stored the cost in an array called `cost_array` which is used later in the code in comparing the costs.
+5) We get guaranteed speedups when ncities > 35000. So, we run the sequential code when ncities is less than 30,000 and modified code is run otherwise. 
+ 
+Remarks:
+1) Major difference is seen when there a large number of cities as parallelisation for a small dataset incorporates larger computational cost. 
+2) Answers found through the sequential and parallel way are exactly same and accuracy is maintained.
+
+*/
+
+*/
+
 float local_sqr(float x)
 {
   return x*x;
