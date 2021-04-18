@@ -8,6 +8,21 @@
 `./tour 30000` (for 30,000 cities)
 `./tour 50000` (for 50,000 cities)
 
+
+## Proof of Speedup
+### For No. of cities = 30,000
+
+
+![3000-a](proof/3000-a.png)
+
+
+![3000-b](proof/3000-b.png)
+
+
+![3000-c](proof/3000-c.png)
+
+
+
 ## Average Time for Unchanged code for different results
 Unchanged Code
 
