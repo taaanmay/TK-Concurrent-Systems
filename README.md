@@ -13,13 +13,13 @@
 ### For No. of cities = 30,000
 
 
-![3000-a](proof/3000-a.png)
+![3000-a](Proof/3000-a.png)
 
 
-![3000-b](proof/3000-b.png)
+![3000-b](Proof/3000-b.png)
 
 
-![3000-c](proof/3000-c.png)
+![3000-c](Proof/3000-c.png)
 
 
 
