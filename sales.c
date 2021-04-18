@@ -39,10 +39,6 @@ void simple_find_tour(const point cities[], int tour[], int ncities)
 
   for (i = 1; i < ncities; i++)
   {
-    if (i % 1000 == 0)
-    {
-      printf("\r%d", i);
-    }
     CloseDist = DBL_MAX;
     for (j = 0; j < ncities - 1; j++)
     {
