@@ -27,7 +27,7 @@ Remarks:
 
 */
 
-*/
+
 
 float local_sqr(float x)
 {
