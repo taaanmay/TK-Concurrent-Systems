@@ -11,7 +11,7 @@
 #include <xmmintrin.h>
 
 
-/*
+
 /* Changes Made :
 Added SIMD instructions and used OpenMP.
 1) Firstly, Parallelised the for loop which initialises the visited array using Parallel For loop. 
