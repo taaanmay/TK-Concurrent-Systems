@@ -76,3 +76,34 @@ Unchanged Code
 142750
 
 #### Average = 135136.9
+
+
+### Time for 20,000
+7041881 microseconds
+6647489 microseconds
+7147596 microseconds
+6980589 microseconds
+7193061 microseconds
+
+#### Average = 70,02,123
+
+
+
+### Time for 30,000
+15392809 microseconds
+15381103 microseconds
+15287771 microseconds
+15180779 microseconds
+
+### Average = 1,53,10,616
+
+
+### Time for 35,000
+20730253 microseconds
+20947452 microseconds
+20626099 microseconds
+
+### Average = 2,07,67,935
+
+
+
