@@ -36,21 +36,21 @@
 
 ### For No. of cities = 50,000
 
-![5000-a](Proof/5000-a.png)
+![50000-a](Proof/50000-a.png)
 
 
-![5000-b](Proof/5000-b.png)
+![50000-b](Proof/50000-b.png)
 
 
-![5000-c](Proof/5000-c.png)
+![50000-c](Proof/50000-c.png)
 
 
 ### For No. of cities = 100,000
 
-![10000-a](Proof/10000-a.png)
+![100000-a](Proof/100000-a.png)
 
 
-![10000-b](Proof/10000-b.png)
+![100000-b](Proof/100000-b.png)
 
 
 
