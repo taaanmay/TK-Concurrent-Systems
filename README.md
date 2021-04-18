@@ -1,8 +1,12 @@
 # TK-Concurrent-Systems
 ## Concurrent Systems Assignment
 
-### Compile the Code - 
+### Compile the Program - 
 `gcc mytour.c sales.c -lm -fopenmp -o tour`
+
+### Run the Program - 
+`./tour 30000` (for 30,000 cities)
+`./tour 50000` (for 50,000 cities)
 
 ## Average Time for Unchanged code for different results
 Unchanged Code
