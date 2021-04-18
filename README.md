@@ -1,6 +1,9 @@
 # TK-Concurrent-Systems
 ## Concurrent Systems Assignment
 
+### Compile the Code - 
+`gcc mytour.c sales.c -lm -fopenmp -o tour`
+
 ## Average Time for Unchanged code for different results
 Unchanged Code
 
