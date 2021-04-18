@@ -21,6 +21,7 @@ This repository will become public when the assignment deadline has been ellapse
 6) Stored the cost in an array called `cost_array` which is used later in the code in comparing the costs.
 7) In the end, we free up the space used by the cost_array.
 8) We get guaranteed speedups when ncities > 35000. So, we run the sequential code when ncities is less than 30,000 and modified code is run otherwise. 
+9) To measure the difference, speed-up and slowdown, we modified the sales.c file which prints the time taken by the modified code as well as time taken by the orignal code along with the difference percentage.
  
 ### Remarks:
 1) Major difference is seen when there a large number of cities as parallelisation for a small dataset incorporates larger computational cost. 
