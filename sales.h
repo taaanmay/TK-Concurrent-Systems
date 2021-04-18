@@ -11,8 +11,4 @@ typedef struct {
 
 void simple_find_tour(const point cities[], int tour[], int ncities);
 
-float sqr(float x);
-
-float dist(const point cities[], int i, int j);
-
 #endif // SALES_H
