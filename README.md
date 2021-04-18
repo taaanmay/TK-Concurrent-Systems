@@ -95,7 +95,7 @@ Unchanged Code
 15287771 microseconds
 15180779 microseconds
 
-### Average = 1,53,10,616
+#### Average = 1,53,10,616
 
 
 ### Time for 35,000
@@ -103,7 +103,7 @@ Unchanged Code
 20947452 microseconds
 20626099 microseconds
 
-### Average = 2,07,67,935
+#### Average = 2,07,67,935
 
 
 
