@@ -8,6 +8,23 @@
 `./tour 30000` (for 30,000 cities)
 `./tour 50000` (for 50,000 cities)
 
+## Changes and Remarks:
+To see the changes and explaination in a better way, you can read the ReadMe.md file on `https://github.com/taaanmay/TK-Concurrent-Systems.git`
+This repository will become public when the assignment deadline has been ellapsed. 
+
+### Changes:
+1) Added SIMD instructions and used OpenMP to parallelise and vectorise the code.
+2) Firstly, Parallelised the for loop which initialises the visited array using Parallel For loop. Along with the parallelisation, we vectorised the code using SIMD    instructions.
+3) Then, calculated the modified length called `modified_len` to accomodate the cases where ncities is not exactly divisibe by 4.
+4) Created 2 arrays called city_X and city_Y which stores the x and y coordinates of every city. Used  Parallel For loop to parallelise this loop.
+5) Then, to use SIMD vectorisation, Created __m128 variables to calculate the cost and distance. Using Parallel For Loop and SIMD variables, code was parallelised      and the distance was found much quicker.
+6) Stored the cost in an array called `cost_array` which is used later in the code in comparing the costs.
+7) In the end, we free up the space used by the cost_array.
+8) We get guaranteed speedups when ncities > 35000. So, we run the sequential code when ncities is less than 30,000 and modified code is run otherwise. 
+ 
+### Remarks:
+1) Major difference is seen when there a large number of cities as parallelisation for a small dataset incorporates larger computational cost. 
+2) Answers found through the sequential and parallel way are exactly same and accuracy is maintained.
 
 ## Proof of Speedup
 
