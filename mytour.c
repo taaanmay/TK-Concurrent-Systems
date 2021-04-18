@@ -38,7 +38,7 @@ void sequential_tour(const point cities[], int tour[], int ncities)
     CloseDist = DBL_MAX;
     for (j=0; j<ncities-1; j++) {
       if (!visited[j]) {
-		floate temp_distance = local_dist(cities, ThisPt, j);
+		float temp_distance = local_dist(cities, ThisPt, j);
 		if (temp_distance < CloseDist) {
 	  		CloseDist = temp_distance;
 	  		ClosePt = j;
