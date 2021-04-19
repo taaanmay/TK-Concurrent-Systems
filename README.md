@@ -1,6 +1,8 @@
 # TK-Concurrent-Systems
 ## Concurrent Systems Assignment
+By Tanmay Kaushik
 
+Student No- 18308341
 ### Compile the Program - 
 `gcc mytour.c sales.c -lm -fopenmp -o tour`
 
